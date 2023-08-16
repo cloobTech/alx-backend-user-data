@@ -58,6 +58,7 @@ class Auth:
         return str(uuid.uuid4())
 
     def create_session(self, email: str) -> str:
+        """ Create login session"""
         if not email or type(email) != str:
             raise InvalidRequestError("Invalid email format")
         try:
@@ -66,7 +67,24 @@ class Auth:
             user_id = user.id
             self._db.update_user(user_id, session_id=session_id)
             return session_id
+        except NoResultFound as e:
+            return None
+
+    def get_user_from_session_id(self, session_id: str) -> User:
+        """ get user using the session id """
+        if not session_id or type(session_id) != str:
+            return None
+        try:
+            user = self._db.find_user_by(session_id=session_id)
+            if user:
+                return user
         except NoResultFound:
-            raise ('Invalid User')
+            pass
 
-
+    def destroy_session(self, user_id: int) -> None:
+        """ Destroy a session"""
+        try:
+            self._db.update_user(user_id, session_id=None)
+            return None
+        except ValueError:
+            pass
