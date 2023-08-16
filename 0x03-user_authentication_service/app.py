@@ -7,8 +7,8 @@ app = Flask(__name__)
 AUTH = Auth()
 
 
-@app.route("/", methods=['GET'])
-def welcome():
+@app.route("/", methods=['GET', strict_slashes=False])
+def index():
     """Welcome route"""
     return jsonify({"message": "Bienvenue"})
 
