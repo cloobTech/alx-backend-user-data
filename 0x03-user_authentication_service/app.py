@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, abort, make_response
 from auth import Auth
+from sqlalchemy.orm.exc import NoResultFound
 
 app = Flask(__name__)
 
@@ -8,6 +9,7 @@ AUTH = Auth()
 
 @app.route("/")
 def welcome():
+    """Welcome route"""
     return jsonify({"message": "Bienvenue"})
 
 
@@ -32,7 +34,7 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        if not AUTH.valid_login:
+        if not AUTH.valid_login(email, password):
             abort(401)
         else:
             session_id = AUTH.create_session(email)
@@ -55,6 +57,18 @@ def logout():
             return redirect("/")
     except NoResultFound:
         return jsonify({"message": "User not found"}), 403
+
+
+@app.route("/profile", methods=['GET'])
+def profile():
+    """Get a user's profile"""
+    try:
+        session_id = request.cookies.get('session_id')
+        user = AUTH.get_user_from_session_id(session_id)
+        if user:
+            return jsonify({"email": user.email}), 200
+    except NoResultFound:
+        abort(403)
 
 
 if __name__ == "__main__":
