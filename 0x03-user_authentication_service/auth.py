@@ -100,4 +100,3 @@ class Auth:
                 return reset_token
         except ValueError as e:
             raise e
-
