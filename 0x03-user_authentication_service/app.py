@@ -7,7 +7,7 @@ app = Flask(__name__)
 AUTH = Auth()
 
 
-@app.route("/")
+@app.route("/", methods=['GET'])
 def welcome():
     """Welcome route"""
     return jsonify({"message": "Bienvenue"})
@@ -67,6 +67,20 @@ def profile():
         user = AUTH.get_user_from_session_id(session_id)
         if user:
             return jsonify({"email": user.email}), 200
+    except NoResultFound:
+        abort(403)
+
+
+@app.route("/reset_password", methods=['POST'])
+def reset_password():
+    try:
+        email = request.form.get("email")
+        user = AUTH.find_user_by(email=email)
+
+        if user:
+            reset_token = AUTH.get_reset_password_token(email=email)
+            return jsonify({"email": f"{email}", "reset_token":
+                            f"{reset_token}"}), 200
     except NoResultFound:
         abort(403)
 
