@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, abort, make_response
 from auth import Auth
 from sqlalchemy.orm.exc import NoResultFound
+""" A simple Api to help us with user authentication/registration"""
 
 AUTH = Auth()
 app = Flask(__name__)
