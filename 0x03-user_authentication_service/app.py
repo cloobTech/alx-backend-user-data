@@ -64,7 +64,7 @@ def logout():
         abort(403)
 
 
-@app.route("/profile", methods=['GET'])
+@app.route("/profile", methods=['GET'], strict_slashes=False)
 def profile():
     """Get a user's profile"""
     try:
@@ -76,18 +76,33 @@ def profile():
         abort(403)
 
 
-@app.route("/reset_password", methods=['POST'])
+@app.route("/reset_password", methods=['POST'], strict_slashes=False)
 def reset_password():
+    """ Reset a users password """
     try:
         email = request.form.get("email")
-        user = AUTH.find_user_by(email=email)
+        reset_token = AUTH.get_reset_password_token(email=email)
 
-        if user:
-            reset_token = AUTH.get_reset_password_token(email=email)
+        if reset_token:
             return jsonify({"email": f"{email}", "reset_token":
                             f"{reset_token}"}), 200
     except NoResultFound:
         abort(403)
+
+
+@app.route("/reset_password", methods=['PUT'], strict_slashes=False)
+def update_password():
+    """ update a user's password"""
+    try:
+        email = request.form.get("email")
+        reset_token = request.form.get("reset_token")
+        new_password = request.form.get("new_password")
+
+        AUTH.update_password(reset_token, new_password)
+        return jsonify({'email': f'{email}',
+                        'message': 'password updated'}), 200
+    except ValueError:
+        return jsonify({'message': 'Invalid token'}), 403
 
 
 if __name__ == "__main__":
