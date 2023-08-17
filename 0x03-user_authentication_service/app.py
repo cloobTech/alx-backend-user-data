@@ -74,7 +74,8 @@ def profile():
         if user:
             return jsonify({"email": user.email}), 200
     except NoResultFound:
-        abort(403)
+        pass
+    return make_response(), 403
 
 
 @app.route("/reset_password", methods=['POST'], strict_slashes=False)
@@ -88,7 +89,8 @@ def reset_password():
             return jsonify({"email": f"{email}", "reset_token":
                             f"{reset_token}"}), 200
     except NoResultFound:
-        abort(403)
+        pass
+    return make_response(), 403
 
 
 @app.route("/reset_password", methods=['PUT'], strict_slashes=False)
