@@ -62,6 +62,7 @@ def logout():
             return redirect("/")
     except NoResultFound:
         return make_response(), 403
+    return make_response(), 403
 
 
 @app.route("/profile", methods=['GET'], strict_slashes=False)
