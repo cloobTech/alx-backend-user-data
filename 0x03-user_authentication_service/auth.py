@@ -91,6 +91,7 @@ class Auth:
             raise e
 
     def get_reset_password_token(self, email: str) -> str:
+        """ get token to reset password """
         if not email or type(email) != str:
             return None
         try:
@@ -101,5 +102,16 @@ class Auth:
                 return reset_token
         except NoResultFound as e:
             raise e
+        except ValueError as e:
+            raise e
+
+    def update_password(self, reset_token: str, password:str) -> None:
+        """ Update user's password"""
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+            if user:
+                hashed_pwd = _hash_password(password)
+                self._db.update_user(user.id, hashed_password=hashed_pwd, reset_token=None)
+                return None
         except ValueError as e:
             raise e
