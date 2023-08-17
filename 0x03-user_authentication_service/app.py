@@ -2,7 +2,7 @@
 """
     A simple Api to help us with user authentication/registration
 """
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask, jsonify, request, abort, make_response, redirect
 from auth import Auth
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -51,7 +51,7 @@ def login():
         return jsonify({"message": "Invalid Login"}), 401
 
 
-@app.route("/sessions", methods=['DELETE'])
+@app.route("/sessions", methods=['DELETE'], strict_slashes=False)
 def logout():
     """Logout a user"""
     try:
