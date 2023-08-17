@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 """
     A simple Api to help us with user authentication/registration
 """
