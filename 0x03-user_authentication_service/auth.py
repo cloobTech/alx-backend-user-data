@@ -105,13 +105,14 @@ class Auth:
         except ValueError as e:
             raise e
 
-    def update_password(self, reset_token: str, password:str) -> None:
+    def update_password(self, reset_token: str, password: str) -> None:
         """ Update user's password"""
         try:
             user = self._db.find_user_by(reset_token=reset_token)
             if user:
                 hashed_pwd = _hash_password(password)
-                self._db.update_user(user.id, hashed_password=hashed_pwd, reset_token=None)
+                self._db.update_user(user.id, hashed_password=hashed_pwd,
+                                     reset_token=None)
                 return None
         except ValueError as e:
             raise e
