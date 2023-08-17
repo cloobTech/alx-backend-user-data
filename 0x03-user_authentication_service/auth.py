@@ -16,6 +16,11 @@ def _hash_password(password: str) -> bytes:
     return hashed_pwd
 
 
+def _generate_uuid() -> str:
+    """Generate a new UUID string."""
+    return str(uuid.uuid4())
+
+
 class Auth:
     """Auth class to interact with the authentication database.
     """
@@ -53,17 +58,13 @@ class Auth:
             pass
         return False
 
-    def _generate_uuid(self) -> str:
-        """Generate a new UUID string."""
-        return str(uuid.uuid4())
-
     def create_session(self, email: str) -> str:
         """ Create login session"""
         if not email or type(email) != str:
             raise InvalidRequestError("Invalid email format")
         try:
             user = self._db.find_user_by(email=email)
-            session_id = self._generate_uuid()
+            session_id = _generate_uuid()
             user_id = user.id
             self._db.update_user(user_id, session_id=session_id)
             return session_id
@@ -95,7 +96,7 @@ class Auth:
         try:
             user = self._db.find_user_by(email=email)
             if user:
-                reset_token = self._generate_uuid()
+                reset_token = _generate_uuid()
                 self._db.update_user(user.id, reset_token=reset_token)
                 return reset_token
         except NoResultFound as e:
